@@ -52,10 +52,18 @@ int main(int argc, char **argv) {
   int client_addr_len = sizeof(client_addr);
   
   std::cout << "Waiting for a client to connect...\n";
+
+  while(true){
+    int client_socket=accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
+    if(client_socket<0){
+      std::cerr<<"Failed to accept connection";
+      continue;
+    }
+    std::cout<<"Client connected\n";
+    send(client_socket,"HTTP/1.1 200 OK\r\n\r\n",20,0);
+    close(client_socket);
+  }
   
-  accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
-  std::cout << "Client connected\n";
-  send(client_socket,"HTTP/1.1 200 OK\r\n\r\n",20,0);
   
   close(server_fd);
 
